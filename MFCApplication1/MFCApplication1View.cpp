@@ -895,11 +895,49 @@ void CMFCApplication1View::sobel(BYTE* window, int wid, int hei, int* sob_x, int
 
 }
 
-//原图为黑白图
+//原图为黑白图 白色为目标 黑色为背景
 void CMFCApplication1View::erosion(BYTE* image, int w, int h, BYTE* outImg)
 {
 	int rept;
+	BYTE block[9] = {};
 	//腐蚀
+	memcpy(outImg, image, w * h);
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+
+			
+			if (i == 0 || j == 0 || i == h - 1 || j == w - 1)
+			{
+
+			}
+			else {
+
+				int flag = 0;
+				if (outImg[i * w + j] == 255)//是目标
+				{
+					//pick up a 3*3 block
+					for (int m = -1; m < 2; m++){
+						for (int n = -1; n < 2; n++) {
+							if (image[(i + m) * w + n + j] == 0)
+							{
+								flag++;
+							}
+						}
+					}
+					if (flag > 2)
+					{
+						outImg[i * w + j] = 0;
+					}
+
+				}
+			}
+
+
+
+		}
+	}
+	memcpy(image, outImg, w * h);
 
 }
 
@@ -907,6 +945,44 @@ void CMFCApplication1View::dilation(BYTE* image, int w, int h, BYTE* outImg)
 {
 	int rept;
 	//膨胀
+	BYTE block[9] = {};
+	memcpy(outImg, image, w * h);
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+
+
+			if (i == 0 || j == 0 || i == h - 1 || j == w - 1)
+			{
+
+			}
+			else {
+
+				int flag = 0;
+				if (outImg[i * w + j] == 0)//是背景
+				{
+					//pick up a 3*3 block
+					for (int m = -1; m < 2; m++) {
+						for (int n = -1; n < 2; n++) {
+							if (image[(i + m) * w + n + j] == 255)
+							{
+								flag++;
+							}
+						}
+					}
+					if (flag > 2)
+					{
+						outImg[i * w + j] = 255;
+					}
+
+				}
+			}
+
+
+
+		}
+	}
+	memcpy(image, outImg, w * h);
 }
 
 
